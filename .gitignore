@@ -1,0 +1,78 @@
+# JetBrains IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# Zed
+.zed/
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.VC.db
+*.VC.VC.opendb
+
+# Eclipse
+.project
+.classpath
+.settings/
+.metadata/
+bin/
+tmp/
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+nbdist/
+.nb-gradle/
+
+# Xcode
+xcuserdata/
+*.xcuserstate
+*.xcworkspace/xcuserdata/
+DerivedData/
+*.xccheckout
+*.moved-aside
+*.xcscmblueprint
+
+# Sublime Text
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*.swn
+*~
+Session.vim
+
+# Kate
+*.kate-swp
+.directory
+
+# Code::Blocks
+*.depend
+*.layout
+
+# Qt Creator
+*.pro.user
+*.pro.user.*
+CMakeLists.txt.user
+CMakeLists.txt.user.*
+
+# CLion / CMake generated IDE files
+cmake-build-*/
+CMakeUserPresets.json
+
+# Make / build tools
+.tools/
+dist/
