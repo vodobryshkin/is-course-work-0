@@ -1,0 +1,78 @@
+@startuml
+title ""
+
+left to right direction
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam actorStyle stickman
+
+skinparam usecase {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+skinparam rectangle {
+    BackgroundColor White
+    BorderColor Black
+}
+
+actor "Пользователь\nсистемы" as User
+actor "Зарегистрированный\nпользователь" as RegisteredUser
+actor "Авторизованный\nпользователь" as AuthorizedUser
+actor "Участник\nтурнира" as Participant
+actor "Тренер\nкоманды" as Coach
+actor "Организатор\nтурнира" as Organizer
+actor "Судья\nматча" as Referee
+
+RegisteredUser -|> User
+AuthorizedUser -|> RegisteredUser
+
+Participant -|> AuthorizedUser
+Coach -|> AuthorizedUser
+Organizer -|> AuthorizedUser
+Referee -|> AuthorizedUser
+
+rectangle "Goalissimo" {
+
+    usecase "Создание турнира" as UC1
+    usecase "Подача заявки\nна участие в турнире" as UC2
+    usecase "Управление составом\nкоманд турнира" as UC3
+    usecase "Проведение жеребьевки\nкоманд" as UC4
+    usecase "Управление стадионами\nтурнира" as UC5
+    usecase "Формирование расписания\nтурнира" as UC6
+    usecase "Просмотр расписания\nтурнира" as UC7
+    usecase "Регистрация\nучетной записи" as UC8
+    usecase "Авторизация пользователя" as UC9
+    usecase "Авторизация пользователя\nс двухфакторной\nаутентификацией" as UC9.1
+    usecase "Фиксация результата\nи событий матча" as UC10
+    usecase "Просмотр статистики матча,\nкоманды и футболистов" as UC11
+    usecase "Просмотр личного\nкабинета" as UC12
+    usecase "Управление составом\nкоманды" as UC13
+    usecase "Просмотр информации\nо команде и ее показателях" as UC14
+}
+
+User -- UC8
+RegisteredUser -- UC9
+AuthorizedUser -- UC12
+
+UC9 <-- UC9.1: <<extends>>
+
+Participant -- UC7
+Participant -- UC11
+
+Coach -- UC2
+Coach -- UC13
+Coach -- UC14
+
+Organizer -- UC1
+Organizer -- UC3
+Organizer -- UC4
+Organizer -- UC5
+Organizer -- UC6
+Organizer -- UC10
+
+Referee -- UC10
+
+@enduml
