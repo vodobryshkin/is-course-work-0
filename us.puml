@@ -6,6 +6,10 @@ left to right direction
 skinparam packageStyle rectangle
 skinparam shadowing false
 skinparam actorStyle stickman
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 14
+skinparam nodesep 26
+skinparam ranksep 32
 
 skinparam usecase {
     BackgroundColor White
@@ -26,38 +30,62 @@ actor "Тренер\nкоманды" as Coach
 actor "Организатор\nтурнира" as Organizer
 actor "Судья\nматча" as Referee
 
-RegisteredUser -|> User
-AuthorizedUser -|> RegisteredUser
+AuthorizedUser -up-|> RegisteredUser
 
-Participant -|> AuthorizedUser
-Coach -|> AuthorizedUser
-Organizer -|> AuthorizedUser
-Referee -|> AuthorizedUser
+Participant -up-|> AuthorizedUser
+Coach -up-|> AuthorizedUser
+Organizer -up-|> AuthorizedUser
+Referee -up-|> AuthorizedUser
 
 rectangle "Goalissimo" {
 
-    usecase "Создание турнира" as UC1
-    usecase "Подача заявки\nна участие в турнире" as UC2
-    usecase "Управление составом\nкоманд турнира" as UC3
-    usecase "Проведение жеребьевки\nкоманд" as UC4
-    usecase "Управление стадионами\nтурнира" as UC5
-    usecase "Формирование расписания\nтурнира" as UC6
-    usecase "Просмотр расписания\nтурнира" as UC7
-    usecase "Регистрация\nучетной записи" as UC8
-    usecase "Авторизация пользователя" as UC9
-    usecase "Авторизация пользователя\nс двухфакторной\nаутентификацией" as UC9.1
-    usecase "Фиксация результата\nи событий матча" as UC10
-    usecase "Просмотр статистики матча,\nкоманды и футболистов" as UC11
-    usecase "Просмотр личного\nкабинета" as UC12
-    usecase "Управление составом\nкоманды" as UC13
-    usecase "Просмотр информации\nо команде и ее показателях" as UC14
+    usecase "Регистрация учетной записи\nUC8" as UC8
+    usecase "Авторизация пользователя\nс двухфакторной аутентификацией\nUC9" as UC9
+    usecase "Просмотр личного кабинета\nUC12" as UC12
+
+    usecase "Просмотр расписания турнира\nUC7" as UC7
+
+    together {
+        usecase "Просмотр статистики матча,\nкоманды и футболистов\nUC11" as UC11
+        usecase "Просмотр статистики матча\nUC11.1" as UC11_1
+        usecase "Просмотр статистики команды\nUC11.2" as UC11_2
+        usecase "Просмотр статистики футболистов\nUC11.3" as UC11_3
+    }
+
+    usecase "Подача заявки\nна участие в турнире\nUC2" as UC2
+
+    together {
+        usecase "Управление составом команды\nUC13" as UC13
+        usecase "Добавление футболиста\nв состав команды\nUC13.1" as UC13_1
+        usecase "Исключение футболиста\nиз состава команды\nUC13.2" as UC13_2
+    }
+
+    together {
+        usecase "Просмотр информации\nо команде и ее показателях\nUC14" as UC14
+        usecase "Управление командой\nUC14.1" as UC14_1
+        usecase "Просмотр общей статистики\nматчей команды\nUC14.2" as UC14_2
+    }
+
+    usecase "Создание турнира\nUC1" as UC1
+    usecase "Добавление команды в турнир\nUC3" as UC3
+    usecase "Удаление команды из турнира\nUC3.1" as UC3_1
+
+    together {
+        usecase "Проведение жеребьевки команд\nUC4" as UC4
+        usecase "Жеребьевка команд\nдля чемпионата\nUC4.1" as UC4_1
+        usecase "Жеребьевка команд\nдля кубка\nUC4.2" as UC4_2
+        usecase "Жеребьевка команд для кубка\nс групповой стадией\nUC4.3" as UC4_3
+    }
+
+    usecase "Добавление стадиона в турнир\nUC5" as UC5
+    usecase "Изменение данных стадиона\nUC5.1" as UC5_1
+    usecase "Формирование расписания турнира\nUC6" as UC6
+    usecase "Фиксация результата\nи событий матча\nUC10" as UC10
 }
 
 User -- UC8
 RegisteredUser -- UC9
 AuthorizedUser -- UC12
-
-UC9 <-- UC9.1: <<extends>>
 
 Participant -- UC7
 Participant -- UC11
@@ -68,11 +96,52 @@ Coach -- UC14
 
 Organizer -- UC1
 Organizer -- UC3
+Organizer -- UC3_1
 Organizer -- UC4
+Organizer -- UC4_1
+Organizer -- UC4_2
+Organizer -- UC4_3
 Organizer -- UC5
+Organizer -- UC5_1
 Organizer -- UC6
 Organizer -- UC10
 
 Referee -- UC10
+
+UC4_1 .left.> UC4 : <<include>>
+UC4_2 .left.> UC4 : <<include>>
+UC4_3 .left.> UC4 : <<include>>
+
+UC11_1 .left.> UC11 : <<extend>>
+UC11_2 .left.> UC11 : <<extend>>
+UC11_3 .left.> UC11 : <<extend>>
+
+UC13_1 .left.> UC13 : <<extend>>
+UC13_2 .left.> UC13 : <<extend>>
+
+UC14_1 .left.> UC14 : <<extend>>
+UC14_2 .left.> UC14 : <<extend>>
+
+' Только расположение элементов.
+UC11 -[hidden]right-> UC11_1
+UC11_1 -[hidden]down-> UC11_2
+UC11_2 -[hidden]down-> UC11_3
+
+UC13 -[hidden]right-> UC13_1
+UC13_1 -[hidden]down-> UC13_2
+
+UC14 -[hidden]right-> UC14_1
+UC14_1 -[hidden]down-> UC14_2
+
+UC4 -[hidden]right-> UC4_1
+UC4_1 -[hidden]down-> UC4_2
+UC4_2 -[hidden]down-> UC4_3
+
+User -[hidden]down-> RegisteredUser
+RegisteredUser -[hidden]down-> AuthorizedUser
+AuthorizedUser -[hidden]down-> Participant
+Participant -[hidden]down-> Coach
+Coach -[hidden]down-> Organizer
+Organizer -[hidden]down-> Referee
 
 @enduml
