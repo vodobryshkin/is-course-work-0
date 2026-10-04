@@ -23,77 +23,237 @@ skinparam rectangle {
 }
 
 actor "Пользователь\nсистемы" as User
-actor "Зарегистрированный\nпользователь" as RegisteredUser
-actor "Авторизованный\nпользователь" as AuthorizedUser
-actor "Участник\nтурнира" as Participant
-actor "Тренер\nкоманды" as Coach
-actor "Организатор\nтурнира" as Organizer
-actor "Судья\nматча" as Referee
-
-AuthorizedUser -up-|> RegisteredUser
-
-Participant -up-|> AuthorizedUser
-Coach -up-|> AuthorizedUser
-Organizer -up-|> AuthorizedUser
-Referee -up-|> AuthorizedUser
 
 rectangle "Goalissimo" {
-
     usecase "Регистрация учетной записи\nUC8" as UC8
+}
+
+User -- UC8
+
+
+@enduml
+
+@startuml
+title ""
+
+left to right direction
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam actorStyle stickman
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 14
+skinparam nodesep 26
+skinparam ranksep 32
+
+skinparam usecase {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+skinparam rectangle {
+    BackgroundColor White
+    BorderColor Black
+}
+
+actor "Зарегистрированный\nпользователь" as RegisteredUser
+
+rectangle "Goalissimo" {
+    usecase "Авторизация пользователя\nс двухфакторной аутентификацией\nUC9" as UC9
+}
+
+RegisteredUser -- UC9
+
+
+@enduml
+
+@startuml
+title ""
+
+left to right direction
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam actorStyle stickman
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 14
+skinparam nodesep 26
+skinparam ranksep 32
+
+skinparam usecase {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+skinparam rectangle {
+    BackgroundColor White
+    BorderColor Black
+}
+
+actor "Авторизованный\nпользователь" as AuthorizedUser
+
+rectangle "Goalissimo" {
     usecase "Авторизация пользователя\nс двухфакторной аутентификацией\nUC9" as UC9
     usecase "Просмотр личного кабинета\nUC12" as UC12
+}
 
+AuthorizedUser -- UC9
+AuthorizedUser -- UC12
+
+
+@enduml
+
+@startuml
+title ""
+
+left to right direction
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam actorStyle stickman
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 14
+skinparam nodesep 26
+skinparam ranksep 32
+
+skinparam usecase {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+skinparam rectangle {
+    BackgroundColor White
+    BorderColor Black
+}
+
+actor "Участник\nтурнира" as Participant
+
+rectangle "Goalissimo" {
+    usecase "Авторизация пользователя\nс двухфакторной аутентификацией\nUC9" as UC9
+    usecase "Просмотр личного кабинета\nUC12" as UC12
     usecase "Просмотр расписания турнира\nUC7" as UC7
+    usecase "Просмотр статистики матча,\nкоманды и футболистов" as UC11
+    usecase "Просмотр статистики матча\nUC11.1" as UC11_1
+    usecase "Просмотр статистики команды\nUC11.2" as UC11_2
+    usecase "Просмотр статистики футболистов\nUC11.3" as UC11_3
+}
 
-    together {
-        usecase "Просмотр статистики матча,\nкоманды и футболистов\nUC11" as UC11
-        usecase "Просмотр статистики матча\nUC11.1" as UC11_1
-        usecase "Просмотр статистики команды\nUC11.2" as UC11_2
-        usecase "Просмотр статистики футболистов\nUC11.3" as UC11_3
-    }
+Participant -- UC9
+Participant -- UC12
+Participant -- UC7
+Participant -- UC11
 
+UC11_1 .up.> UC11 : <<extend>>
+UC11_2 .up.> UC11 : <<extend>>
+UC11_3 .up.> UC11 : <<extend>>
+
+UC11 -[hidden]down-> UC11_1
+UC11_1 -[hidden]right-> UC11_2
+UC11_2 -[hidden]right-> UC11_3
+@enduml
+
+@startuml
+title ""
+
+left to right direction
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam actorStyle stickman
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 14
+skinparam nodesep 26
+skinparam ranksep 32
+
+skinparam usecase {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+skinparam rectangle {
+    BackgroundColor White
+    BorderColor Black
+}
+
+actor "Тренер\nкоманды" as Coach
+
+rectangle "Goalissimo" {
+    usecase "Авторизация пользователя\nс двухфакторной аутентификацией\nUC9" as UC9
+    usecase "Просмотр личного кабинета\nUC12" as UC12
     usecase "Подача заявки\nна участие в турнире\nUC2" as UC2
+    usecase "Управление составом команды" as UC13
+    usecase "Добавление футболиста\nв состав команды\nUC13.1" as UC13_1
+    usecase "Исключение футболиста\nиз состава команды\nUC13.2" as UC13_2
+    usecase "Просмотр информации\nо команде и ее показателях" as UC14
+    usecase "Управление командой\nUC14.1" as UC14_1
+    usecase "Просмотр общей статистики\nматчей команды\nUC14.2" as UC14_2
+}
 
-    together {
-        usecase "Управление составом команды\nUC13" as UC13
-        usecase "Добавление футболиста\nв состав команды\nUC13.1" as UC13_1
-        usecase "Исключение футболиста\nиз состава команды\nUC13.2" as UC13_2
-    }
+Coach -- UC9
+Coach -- UC12
+Coach -- UC2
+Coach -- UC13
+Coach -- UC14
 
-    together {
-        usecase "Просмотр информации\nо команде и ее показателях\nUC14" as UC14
-        usecase "Управление командой\nUC14.1" as UC14_1
-        usecase "Просмотр общей статистики\nматчей команды\nUC14.2" as UC14_2
-    }
+UC13_1 .up.> UC13 : <<extend>>
+UC13_2 .up.> UC13 : <<extend>>
+UC14_1 .up.> UC14 : <<extend>>
+UC14_2 .up.> UC14 : <<extend>>
 
+UC13 -[hidden]down-> UC13_1
+UC13_1 -[hidden]right-> UC13_2
+UC14 -[hidden]down-> UC14_1
+UC14_1 -[hidden]right-> UC14_2
+@enduml
+
+@startuml
+title ""
+
+left to right direction
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam actorStyle stickman
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 14
+skinparam nodesep 26
+skinparam ranksep 32
+
+skinparam usecase {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+skinparam rectangle {
+    BackgroundColor White
+    BorderColor Black
+}
+
+actor "Организатор\nтурнира" as Organizer
+
+rectangle "Goalissimo" {
+    usecase "Авторизация пользователя\nс двухфакторной аутентификацией\nUC9" as UC9
+    usecase "Просмотр личного кабинета\nUC12" as UC12
     usecase "Создание турнира\nUC1" as UC1
     usecase "Добавление команды в турнир\nUC3" as UC3
     usecase "Удаление команды из турнира\nUC3.1" as UC3_1
-
-    together {
-        usecase "Проведение жеребьевки команд\nUC4" as UC4
-        usecase "Жеребьевка команд\nдля чемпионата\nUC4.1" as UC4_1
-        usecase "Жеребьевка команд\nдля кубка\nUC4.2" as UC4_2
-        usecase "Жеребьевка команд для кубка\nс групповой стадией\nUC4.3" as UC4_3
-    }
-
+    usecase "Проведение жеребьевки команд\nUC4" as UC4
+    usecase "Жеребьевка команд\nдля чемпионата\nUC4.1" as UC4_1
+    usecase "Жеребьевка команд\nдля кубка\nUC4.2" as UC4_2
+    usecase "Жеребьевка команд для кубка\nс групповой стадией\nUC4.3" as UC4_3
     usecase "Добавление стадиона в турнир\nUC5" as UC5
     usecase "Изменение данных стадиона\nUC5.1" as UC5_1
     usecase "Формирование расписания турнира\nUC6" as UC6
     usecase "Фиксация результата\nи событий матча\nUC10" as UC10
 }
 
-User -- UC8
-RegisteredUser -- UC9
-AuthorizedUser -- UC12
-
-Participant -- UC7
-Participant -- UC11
-
-Coach -- UC2
-Coach -- UC13
-Coach -- UC14
-
+Organizer -- UC9
+Organizer -- UC12
 Organizer -- UC1
 Organizer -- UC3
 Organizer -- UC3_1
@@ -106,42 +266,78 @@ Organizer -- UC5_1
 Organizer -- UC6
 Organizer -- UC10
 
+UC4_1 .up.> UC4 : <<include>>
+UC4_2 .up.> UC4 : <<include>>
+UC4_3 .up.> UC4 : <<include>>
+
+UC4 -[hidden]down-> UC4_1
+UC4_1 -[hidden]right-> UC4_2
+UC4_2 -[hidden]right-> UC4_3
+@enduml
+
+@startuml
+title ""
+
+left to right direction
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam actorStyle stickman
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 14
+skinparam nodesep 26
+skinparam ranksep 32
+
+skinparam usecase {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+skinparam rectangle {
+    BackgroundColor White
+    BorderColor Black
+}
+
+actor "Судья\nматча" as Referee
+
+rectangle "Goalissimo" {
+    usecase "Авторизация пользователя\nс двухфакторной аутентификацией\nUC9" as UC9
+    usecase "Просмотр личного кабинета\nUC12" as UC12
+    usecase "Фиксация результата\nи событий матча\nUC10" as UC10
+}
+
+Referee -- UC9
+Referee -- UC12
 Referee -- UC10
 
-UC4_1 .left.> UC4 : <<include>>
-UC4_2 .left.> UC4 : <<include>>
-UC4_3 .left.> UC4 : <<include>>
 
-UC11_1 .left.> UC11 : <<extend>>
-UC11_2 .left.> UC11 : <<extend>>
-UC11_3 .left.> UC11 : <<extend>>
+@enduml
 
-UC13_1 .left.> UC13 : <<extend>>
-UC13_2 .left.> UC13 : <<extend>>
+@startuml
+title ""
 
-UC14_1 .left.> UC14 : <<extend>>
-UC14_2 .left.> UC14 : <<extend>>
+top to bottom direction
+skinparam shadowing false
+skinparam actorStyle stickman
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 14
+skinparam nodesep 45
+skinparam ranksep 50
 
-' Только расположение элементов.
-UC11 -[hidden]right-> UC11_1
-UC11_1 -[hidden]down-> UC11_2
-UC11_2 -[hidden]down-> UC11_3
+actor "Пользователь\nсистемы" as User
+actor "Зарегистрированный\nпользователь" as RegisteredUser
+actor "Авторизованный\nпользователь" as AuthorizedUser
+actor "Участник\nтурнира" as Participant
+actor "Тренер\nкоманды" as Coach
+actor "Организатор\nтурнира" as Organizer
+actor "Судья\nматча" as Referee
 
-UC13 -[hidden]right-> UC13_1
-UC13_1 -[hidden]down-> UC13_2
+AuthorizedUser -up-|> RegisteredUser
+Participant -up-|> AuthorizedUser
+Coach -up-|> AuthorizedUser
+Organizer -up-|> AuthorizedUser
+Referee -up-|> AuthorizedUser
 
-UC14 -[hidden]right-> UC14_1
-UC14_1 -[hidden]down-> UC14_2
-
-UC4 -[hidden]right-> UC4_1
-UC4_1 -[hidden]down-> UC4_2
-UC4_2 -[hidden]down-> UC4_3
-
-User -[hidden]down-> RegisteredUser
-RegisteredUser -[hidden]down-> AuthorizedUser
-AuthorizedUser -[hidden]down-> Participant
-Participant -[hidden]down-> Coach
-Coach -[hidden]down-> Organizer
-Organizer -[hidden]down-> Referee
-
+User -[hidden]right-> RegisteredUser
 @enduml
