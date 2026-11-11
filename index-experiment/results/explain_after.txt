@@ -1,0 +1,112 @@
+schedule
+                                                                               QUERY PLAN                                                                               
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=1.01..97.52 rows=50 width=88) (actual time=0.078..0.168 rows=50.00 loops=1)
+   Buffers: shared hit=76 read=3
+   ->  Nested Loop  (cost=1.01..734.50 rows=380 width=88) (actual time=0.077..0.164 rows=50.00 loops=1)
+         Buffers: shared hit=76 read=3
+         ->  Nested Loop  (cost=0.86..715.55 rows=380 width=79) (actual time=0.069..0.143 rows=50.00 loops=1)
+               Buffers: shared hit=74 read=3
+               ->  Nested Loop  (cost=0.57..569.02 rows=380 width=69) (actual time=0.059..0.098 rows=50.00 loops=1)
+                     Buffers: shared hit=14 read=3
+                     ->  Index Scan using idx_matches_tournament_time on matches m  (cost=0.29..422.50 rows=380 width=59) (actual time=0.038..0.055 rows=50.00 loops=1)
+                           Index Cond: (tournament_id = 25)
+                           Index Searches: 1
+                           Buffers: shared hit=5 read=3
+                     ->  Memoize  (cost=0.29..0.44 rows=1 width=26) (actual time=0.001..0.001 rows=1.00 loops=50)
+                           Cache Key: m.first_team_id
+                           Cache Mode: logical
+                           Hits: 47  Misses: 3  Evictions: 0  Overflows: 0  Memory Usage: 1kB
+                           Buffers: shared hit=9
+                           ->  Index Scan using teams_pkey on teams a  (cost=0.28..0.43 rows=1 width=26) (actual time=0.003..0.003 rows=1.00 loops=3)
+                                 Index Cond: (team_id = m.first_team_id)
+                                 Index Searches: 3
+                                 Buffers: shared hit=9
+               ->  Memoize  (cost=0.29..0.44 rows=1 width=26) (actual time=0.001..0.001 rows=1.00 loops=50)
+                     Cache Key: m.second_team_id
+                     Cache Mode: logical
+                     Hits: 30  Misses: 20  Evictions: 0  Overflows: 0  Memory Usage: 3kB
+                     Buffers: shared hit=60
+                     ->  Index Scan using teams_pkey on teams b  (cost=0.28..0.43 rows=1 width=26) (actual time=0.001..0.001 rows=1.00 loops=20)
+                           Index Cond: (team_id = m.second_team_id)
+                           Index Searches: 20
+                           Buffers: shared hit=60
+         ->  Memoize  (cost=0.15..0.20 rows=1 width=25) (actual time=0.000..0.000 rows=1.00 loops=50)
+               Cache Key: m.stadium_id
+               Cache Mode: logical
+               Hits: 49  Misses: 1  Evictions: 0  Overflows: 0  Memory Usage: 1kB
+               Buffers: shared hit=2
+               ->  Index Scan using stadiums_pkey on stadiums s  (cost=0.14..0.19 rows=1 width=25) (actual time=0.005..0.005 rows=1.00 loops=1)
+                     Index Cond: (stadium_id = m.stadium_id)
+                     Index Searches: 1
+                     Buffers: shared hit=2
+ Planning:
+   Buffers: shared hit=220 read=1
+ Planning Time: 0.855 ms
+ Execution Time: 0.256 ms
+(43 строки)
+
+events
+                                                                      QUERY PLAN                                                                       
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+ Nested Loop  (cost=0.99..54.83 rows=4 width=58) (actual time=0.048..0.072 rows=4.00 loops=1)
+   Buffers: shared hit=28 read=3
+   ->  Nested Loop  (cost=0.70..53.30 rows=4 width=36) (actual time=0.037..0.057 rows=4.00 loops=1)
+         Buffers: shared hit=16 read=3
+         ->  Index Scan using idx_events_match_time on match_events e  (cost=0.42..20.08 rows=4 width=36) (actual time=0.028..0.043 rows=4.00 loops=1)
+               Index Cond: (match_id = 9121)
+               Index Searches: 1
+               Buffers: shared hit=4 read=3
+         ->  Index Scan using players_pkey on players p  (cost=0.29..8.30 rows=1 width=16) (actual time=0.003..0.003 rows=1.00 loops=4)
+               Index Cond: (player_id = e.player_id)
+               Index Searches: 4
+               Buffers: shared hit=12
+   ->  Index Scan using users_pkey on users u  (cost=0.29..0.38 rows=1 width=38) (actual time=0.003..0.003 rows=1.00 loops=4)
+         Index Cond: (user_id = p.user_id)
+         Index Searches: 4
+         Buffers: shared hit=12
+ Planning:
+   Buffers: shared hit=203 read=7
+ Planning Time: 0.537 ms
+ Execution Time: 0.092 ms
+(20 строк)
+
+player
+                                                                           QUERY PLAN                                                                           
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Aggregate  (cost=140.62..140.63 rows=1 width=24) (actual time=0.116..0.117 rows=1.00 loops=1)
+   Buffers: shared hit=13 read=2
+   ->  Hash Join  (cost=123.09..140.60 rows=1 width=6) (actual time=0.053..0.109 rows=56.00 loops=1)
+         Hash Cond: (m.match_id = e.match_id)
+         Buffers: shared hit=13 read=2
+         ->  Index Only Scan using idx_matches_tournament_time on matches m  (cost=0.29..14.94 rows=380 width=8) (actual time=0.006..0.042 rows=380.00 loops=1)
+               Index Cond: (tournament_id = 25)
+               Heap Fetches: 0
+               Index Searches: 1
+               Buffers: shared hit=4 read=1
+         ->  Hash  (cost=122.37..122.37 rows=35 width=14) (actual time=0.041..0.041 rows=56.00 loops=1)
+               Buckets: 1024  Batches: 1  Memory Usage: 11kB
+               Buffers: shared hit=9 read=1
+               ->  Bitmap Heap Scan on match_events e  (cost=4.69..122.37 rows=35 width=14) (actual time=0.021..0.034 rows=56.00 loops=1)
+                     Recheck Cond: (player_id = 9620)
+                     Heap Blocks: exact=7
+                     Buffers: shared hit=9 read=1
+                     ->  Bitmap Index Scan on idx_events_player_match  (cost=0.00..4.68 rows=35 width=0) (actual time=0.015..0.015 rows=56.00 loops=1)
+                           Index Cond: (player_id = 9620)
+                           Index Searches: 1
+                           Buffers: shared hit=2 read=1
+ Planning:
+   Buffers: shared hit=14 read=3
+ Planning Time: 0.179 ms
+ Execution Time: 0.137 ms
+(25 строк)
+
+statistics
+                                                        QUERY PLAN                                                         
+---------------------------------------------------------------------------------------------------------------------------
+ Function Scan on get_team_statistics  (cost=0.25..10.25 rows=1000 width=88) (actual time=1.272..1.272 rows=20.00 loops=1)
+   Buffers: shared hit=180
+ Planning Time: 0.014 ms
+ Execution Time: 1.707 ms
+(4 строки)
+

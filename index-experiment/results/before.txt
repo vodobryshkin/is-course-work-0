@@ -1,0 +1,55 @@
+pgbench: setting random seed to 42
+pgbench (18.3 (Debian 18.3-1.pgdg12+1))
+transaction type: multiple scripts
+scaling factor: 1
+query mode: simple
+number of clients: 4
+number of threads: 2
+maximum number of tries: 1
+duration: 30 s
+number of transactions actually processed: 67816
+number of failed transactions: 0 (0.000%)
+latency average = 1.769 ms
+initial connection time = 3.817 ms
+tps = 2260.680579 (without initial connection time)
+SQL script 1: /lab/bench/schedule.sql
+ - weight: 1 (targets 25.0% of total)
+ - 16822 transactions (24.8% of total)
+ - number of transactions actually processed: 16822 (tps = 560.769858)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 1.190 ms
+ - latency stddev = 0.248 ms
+ - statement latencies in milliseconds and failures:
+         0.001           0 \set tid random(1, 50)
+         1.189           0 SELECT m.match_id, m.start_time, a.title, b.title, s.title AS stadium,
+SQL script 2: /lab/bench/events.sql
+ - weight: 1 (targets 25.0% of total)
+ - 17152 transactions (25.3% of total)
+ - number of transactions actually processed: 17152 (tps = 571.770575)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 2.124 ms
+ - latency stddev = 0.406 ms
+ - statement latencies in milliseconds and failures:
+         0.001           0 \set mid random(1, 19000)
+         2.123           0 SELECT e.type, e.minute, e.description, u.full_name
+SQL script 3: /lab/bench/player.sql
+ - weight: 1 (targets 25.0% of total)
+ - 16912 transactions (24.9% of total)
+ - number of transactions actually processed: 16912 (tps = 563.770054)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 1.977 ms
+ - latency stddev = 0.365 ms
+ - statement latencies in milliseconds and failures:
+         0.001           0 \set tid random(1, 50)
+         0.001           0 \set player_id (:tid - 1) * 400 + random(1, 400)
+         1.975           0 SELECT count(*) FILTER (WHERE e.type = 'goal') AS goals,
+SQL script 4: /lab/bench/statistics.sql
+ - weight: 1 (targets 25.0% of total)
+ - 16920 transactions (24.9% of total)
+ - number of transactions actually processed: 16920 (tps = 564.036738)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 1.775 ms
+ - latency stddev = 0.339 ms
+ - statement latencies in milliseconds and failures:
+         0.001           0 \set tid random(1, 50)
+         1.774           0 SELECT * FROM get_team_statistics(:tid);

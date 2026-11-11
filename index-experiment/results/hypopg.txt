@@ -1,0 +1,126 @@
+CREATE EXTENSION
+Планы без дополнительных индексов
+schedule
+                                           QUERY PLAN                                           
+------------------------------------------------------------------------------------------------
+ Limit  (cost=607.33..607.45 rows=50 width=88)
+   ->  Sort  (cost=607.33..608.28 rows=380 width=88)
+         Sort Key: m.start_time, m.match_id
+         ->  Hash Join  (cost=63.12..594.71 rows=380 width=88)
+               Hash Cond: (m.stadium_id = s.stadium_id)
+               ->  Hash Join  (cost=61.00..591.50 rows=380 width=79)
+                     Hash Cond: (m.second_team_id = b.team_id)
+                     ->  Hash Join  (cost=30.50..560.00 rows=380 width=69)
+                           Hash Cond: (m.first_team_id = a.team_id)
+                           ->  Seq Scan on matches m  (cost=0.00..528.50 rows=380 width=59)
+                                 Filter: (tournament_id = 25)
+                           ->  Hash  (cost=18.00..18.00 rows=1000 width=26)
+                                 ->  Seq Scan on teams a  (cost=0.00..18.00 rows=1000 width=26)
+                     ->  Hash  (cost=18.00..18.00 rows=1000 width=26)
+                           ->  Seq Scan on teams b  (cost=0.00..18.00 rows=1000 width=26)
+               ->  Hash  (cost=1.50..1.50 rows=50 width=25)
+                     ->  Seq Scan on stadiums s  (cost=0.00..1.50 rows=50 width=25)
+(17 строк)
+
+events
+                                           QUERY PLAN                                            
+-------------------------------------------------------------------------------------------------
+ Sort  (cost=1679.79..1679.80 rows=4 width=58)
+   Sort Key: e.minute, e.match_event_id
+   ->  Nested Loop  (cost=0.57..1679.75 rows=4 width=58)
+         ->  Nested Loop  (cost=0.29..1678.22 rows=4 width=36)
+               ->  Seq Scan on match_events e  (cost=0.00..1645.00 rows=4 width=36)
+                     Filter: (match_id = 9121)
+               ->  Index Scan using players_pkey on players p  (cost=0.29..8.30 rows=1 width=16)
+                     Index Cond: (player_id = e.player_id)
+         ->  Index Scan using users_pkey on users u  (cost=0.29..0.38 rows=1 width=38)
+               Index Cond: (user_id = p.user_id)
+(10 строк)
+
+player
+                                        QUERY PLAN                                        
+------------------------------------------------------------------------------------------
+ Aggregate  (cost=1899.81..1899.82 rows=1 width=24)
+   ->  Nested Loop  (cost=0.29..1899.80 rows=1 width=6)
+         ->  Seq Scan on match_events e  (cost=0.00..1645.00 rows=35 width=14)
+               Filter: (player_id = 9620)
+         ->  Index Scan using matches_pkey on matches m  (cost=0.29..7.28 rows=1 width=8)
+               Index Cond: (match_id = e.match_id)
+               Filter: (tournament_id = 25)
+(7 строк)
+
+ indexrelid |                       indexname                        
+------------+--------------------------------------------------------
+      13578 | <13578>btree_matches_tournament_id_start_time_match_id
+(1 строка)
+
+ indexrelid |                        indexname                         
+------------+----------------------------------------------------------
+      13579 | <13579>btree_match_events_match_id_minute_match_event_id
+(1 строка)
+
+ indexrelid |                  indexname                   
+------------+----------------------------------------------
+      13580 | <13580>btree_match_events_player_id_match_id
+(1 строка)
+
+Те же планы с гипотетическими индексами
+schedule
+                                                                      QUERY PLAN                                                                       
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=0.76..97.80 rows=50 width=88)
+   ->  Nested Loop  (cost=0.76..738.25 rows=380 width=88)
+         ->  Nested Loop  (cost=0.61..719.30 rows=380 width=79)
+               ->  Nested Loop  (cost=0.32..572.77 rows=380 width=69)
+                     ->  Index Scan using "<13578>btree_matches_tournament_id_start_time_match_id" on matches m  (cost=0.04..426.25 rows=380 width=59)
+                           Index Cond: (tournament_id = 25)
+                     ->  Memoize  (cost=0.29..0.44 rows=1 width=26)
+                           Cache Key: m.first_team_id
+                           Cache Mode: logical
+                           ->  Index Scan using teams_pkey on teams a  (cost=0.28..0.43 rows=1 width=26)
+                                 Index Cond: (team_id = m.first_team_id)
+               ->  Memoize  (cost=0.29..0.44 rows=1 width=26)
+                     Cache Key: m.second_team_id
+                     Cache Mode: logical
+                     ->  Index Scan using teams_pkey on teams b  (cost=0.28..0.43 rows=1 width=26)
+                           Index Cond: (team_id = m.second_team_id)
+         ->  Memoize  (cost=0.15..0.20 rows=1 width=25)
+               Cache Key: m.stadium_id
+               Cache Mode: logical
+               ->  Index Scan using stadiums_pkey on stadiums s  (cost=0.14..0.19 rows=1 width=25)
+                     Index Cond: (stadium_id = m.stadium_id)
+(21 строка)
+
+events
+                                                                  QUERY PLAN                                                                   
+-----------------------------------------------------------------------------------------------------------------------------------------------
+ Nested Loop  (cost=0.62..54.45 rows=4 width=58)
+   ->  Nested Loop  (cost=0.33..52.93 rows=4 width=36)
+         ->  Index Scan using "<13579>btree_match_events_match_id_minute_match_event_id" on match_events e  (cost=0.04..19.70 rows=4 width=36)
+               Index Cond: (match_id = 9121)
+         ->  Index Scan using players_pkey on players p  (cost=0.29..8.30 rows=1 width=16)
+               Index Cond: (player_id = e.player_id)
+   ->  Index Scan using users_pkey on users u  (cost=0.29..0.38 rows=1 width=38)
+         Index Cond: (user_id = p.user_id)
+(8 строк)
+
+player
+                                                                  QUERY PLAN                                                                  
+----------------------------------------------------------------------------------------------------------------------------------------------
+ Aggregate  (cost=143.99..144.00 rows=1 width=24)
+   ->  Hash Join  (cost=122.47..143.98 rows=1 width=6)
+         Hash Cond: (m.match_id = e.match_id)
+         ->  Index Only Scan using "<13578>btree_matches_tournament_id_start_time_match_id" on matches m  (cost=0.04..18.69 rows=380 width=8)
+               Index Cond: (tournament_id = 25)
+         ->  Hash  (cost=121.99..121.99 rows=35 width=14)
+               ->  Bitmap Heap Scan on match_events e  (cost=4.31..121.99 rows=35 width=14)
+                     Recheck Cond: (player_id = 9620)
+                     ->  Bitmap Index Scan on "<13580>btree_match_events_player_id_match_id"  (cost=0.00..4.31 rows=35 width=0)
+                           Index Cond: (player_id = 9620)
+(10 строк)
+
+ hypopg_reset 
+--------------
+ 
+(1 строка)
+

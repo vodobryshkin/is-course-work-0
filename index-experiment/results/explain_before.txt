@@ -1,0 +1,103 @@
+schedule
+                                                                   QUERY PLAN                                                                   
+------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=607.33..607.45 rows=50 width=88) (actual time=1.381..1.396 rows=50.00 loops=1)
+   Buffers: shared hit=314
+   ->  Sort  (cost=607.33..608.28 rows=380 width=88) (actual time=1.379..1.392 rows=50.00 loops=1)
+         Sort Key: m.start_time, m.match_id
+         Sort Method: top-N heapsort  Memory: 31kB
+         Buffers: shared hit=314
+         ->  Hash Join  (cost=63.12..594.71 rows=380 width=88) (actual time=0.714..1.319 rows=380.00 loops=1)
+               Hash Cond: (m.stadium_id = s.stadium_id)
+               Buffers: shared hit=308
+               ->  Hash Join  (cost=61.00..591.50 rows=380 width=79) (actual time=0.685..1.255 rows=380.00 loops=1)
+                     Hash Cond: (m.second_team_id = b.team_id)
+                     Buffers: shared hit=307
+                     ->  Hash Join  (cost=30.50..560.00 rows=380 width=69) (actual time=0.535..1.066 rows=380.00 loops=1)
+                           Hash Cond: (m.first_team_id = a.team_id)
+                           Buffers: shared hit=299
+                           ->  Seq Scan on matches m  (cost=0.00..528.50 rows=380 width=59) (actual time=0.386..0.874 rows=380.00 loops=1)
+                                 Filter: (tournament_id = 25)
+                                 Rows Removed by Filter: 18620
+                                 Buffers: shared hit=291
+                           ->  Hash  (cost=18.00..18.00 rows=1000 width=26) (actual time=0.133..0.135 rows=1000.00 loops=1)
+                                 Buckets: 1024  Batches: 1  Memory Usage: 71kB
+                                 Buffers: shared hit=8
+                                 ->  Seq Scan on teams a  (cost=0.00..18.00 rows=1000 width=26) (actual time=0.004..0.045 rows=1000.00 loops=1)
+                                       Buffers: shared hit=8
+                     ->  Hash  (cost=18.00..18.00 rows=1000 width=26) (actual time=0.140..0.145 rows=1000.00 loops=1)
+                           Buckets: 1024  Batches: 1  Memory Usage: 71kB
+                           Buffers: shared hit=8
+                           ->  Seq Scan on teams b  (cost=0.00..18.00 rows=1000 width=26) (actual time=0.004..0.050 rows=1000.00 loops=1)
+                                 Buffers: shared hit=8
+               ->  Hash  (cost=1.50..1.50 rows=50 width=25) (actual time=0.020..0.021 rows=50.00 loops=1)
+                     Buckets: 1024  Batches: 1  Memory Usage: 12kB
+                     Buffers: shared hit=1
+                     ->  Seq Scan on stadiums s  (cost=0.00..1.50 rows=50 width=25) (actual time=0.005..0.008 rows=50.00 loops=1)
+                           Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=198
+ Planning Time: 1.085 ms
+ Execution Time: 1.479 ms
+(38 строк)
+
+events
+                                                                  QUERY PLAN                                                                  
+----------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=1679.79..1679.80 rows=4 width=58) (actual time=2.459..2.460 rows=4.00 loops=1)
+   Sort Key: e.minute, e.match_event_id
+   Sort Method: quicksort  Memory: 25kB
+   Buffers: shared hit=772
+   ->  Nested Loop  (cost=0.57..1679.75 rows=4 width=58) (actual time=0.298..2.449 rows=4.00 loops=1)
+         Buffers: shared hit=769
+         ->  Nested Loop  (cost=0.29..1678.22 rows=4 width=36) (actual time=0.289..2.429 rows=4.00 loops=1)
+               Buffers: shared hit=757
+               ->  Seq Scan on match_events e  (cost=0.00..1645.00 rows=4 width=36) (actual time=0.280..2.410 rows=4.00 loops=1)
+                     Filter: (match_id = 9121)
+                     Rows Removed by Filter: 71996
+                     Buffers: shared hit=745
+               ->  Index Scan using players_pkey on players p  (cost=0.29..8.30 rows=1 width=16) (actual time=0.003..0.003 rows=1.00 loops=4)
+                     Index Cond: (player_id = e.player_id)
+                     Index Searches: 4
+                     Buffers: shared hit=12
+         ->  Index Scan using users_pkey on users u  (cost=0.29..0.38 rows=1 width=38) (actual time=0.004..0.004 rows=1.00 loops=4)
+               Index Cond: (user_id = p.user_id)
+               Index Searches: 4
+               Buffers: shared hit=12
+ Planning:
+   Buffers: shared hit=169
+ Planning Time: 0.380 ms
+ Execution Time: 2.485 ms
+(24 строки)
+
+player
+                                                               QUERY PLAN                                                               
+----------------------------------------------------------------------------------------------------------------------------------------
+ Aggregate  (cost=1899.81..1899.82 rows=1 width=24) (actual time=2.005..2.006 rows=1.00 loops=1)
+   Buffers: shared hit=913
+   ->  Nested Loop  (cost=0.29..1899.80 rows=1 width=6) (actual time=0.238..1.997 rows=56.00 loops=1)
+         Buffers: shared hit=913
+         ->  Seq Scan on match_events e  (cost=0.00..1645.00 rows=35 width=14) (actual time=0.233..1.948 rows=56.00 loops=1)
+               Filter: (player_id = 9620)
+               Rows Removed by Filter: 71944
+               Buffers: shared hit=745
+         ->  Index Scan using matches_pkey on matches m  (cost=0.29..7.28 rows=1 width=8) (actual time=0.001..0.001 rows=1.00 loops=56)
+               Index Cond: (match_id = e.match_id)
+               Filter: (tournament_id = 25)
+               Index Searches: 56
+               Buffers: shared hit=168
+ Planning:
+   Buffers: shared hit=9
+ Planning Time: 0.121 ms
+ Execution Time: 2.021 ms
+(17 строк)
+
+statistics
+                                                        QUERY PLAN                                                         
+---------------------------------------------------------------------------------------------------------------------------
+ Function Scan on get_team_statistics  (cost=0.25..10.25 rows=1000 width=88) (actual time=2.483..2.484 rows=20.00 loops=1)
+   Buffers: shared hit=736 read=1
+ Planning Time: 0.016 ms
+ Execution Time: 2.936 ms
+(4 строки)
+

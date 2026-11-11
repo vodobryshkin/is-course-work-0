@@ -1,0 +1,178 @@
+BEGIN
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+COMMIT
+BEGIN
+INSERT 0 21100
+INSERT 0 50
+INSERT 0 1000
+INSERT 0 50
+INSERT 0 20000
+INSERT 0 21100
+INSERT 0 50
+INSERT 0 1000
+INSERT 0 50
+INSERT 0 20000
+INSERT 0 1000
+INSERT 0 20000
+INSERT 0 1000
+INSERT 0 50
+INSERT 0 1000
+INSERT 0 20000
+INSERT 0 50
+SELECT 19000
+INSERT 0 19000
+INSERT 0 19000
+INSERT 0 72000
+INSERT 0 1000
+ setval 
+--------
+  21100
+(1 строка)
+
+ setval 
+--------
+     50
+(1 строка)
+
+ setval 
+--------
+   1000
+(1 строка)
+
+ setval 
+--------
+     50
+(1 строка)
+
+ setval 
+--------
+  20000
+(1 строка)
+
+ setval 
+--------
+   1000
+(1 строка)
+
+ setval 
+--------
+     50
+(1 строка)
+
+ setval 
+--------
+  20000
+(1 строка)
+
+ setval 
+--------
+     50
+(1 строка)
+
+ setval 
+--------
+  19000
+(1 строка)
+
+ setval 
+--------
+  19000
+(1 строка)
+
+COMMIT
+ANALYZE
+BEGIN
+CREATE PROCEDURE
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE TRIGGER
+CREATE TRIGGER
+CREATE TRIGGER
+CREATE TRIGGER
+CREATE TRIGGER
+CREATE TRIGGER
+CREATE TRIGGER
+CREATE TRIGGER
+CREATE TRIGGER
+CREATE TRIGGER
+CREATE TRIGGER
+CREATE TRIGGER
+CREATE TRIGGER
+COMMIT
+ validate_tournament_personnel 
+-------------------------------
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+(50 строк)
+
+VACUUM
