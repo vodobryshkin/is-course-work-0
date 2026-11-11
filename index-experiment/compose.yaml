@@ -1,0 +1,24 @@
+name: goalissimo-simple-lab
+services:
+  db:
+    build: .
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: local-experiment-only
+      POSTGRES_DB: goalissimo_test
+      POSTGRES_INITDB_ARGS: --encoding=UTF8 --locale=ru_RU.UTF-8 --locale-provider=libc
+      PGUSER: postgres
+      PGDATABASE: goalissimo_test
+      PGHOST: /var/run/postgresql
+    shm_size: 1gb
+    volumes:
+      - pgdata:/var/lib/postgresql
+      - .:/lab:ro,Z
+    command: [postgres, -c, config_file=/lab/postgresql.conf]
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U postgres -d postgres]
+      interval: 2s
+      timeout: 3s
+      retries: 60
+volumes:
+  pgdata:
